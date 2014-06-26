@@ -1,0 +1,25 @@
+language: php
+
+php:
+  - 5.5
+
+before_script:
+  - sudo apt-get update
+  - sudo apt-get install mysql-server-5.5 mysql-client-5.5 libmysqlclient-dev mysql-source-5.5 libdbd-mysql-perl
+  - ./autogen.sh
+  - cp /usr/src/mysql/mysql-source-5.5.tar.gz .
+  - tar -zxf mysql-source-5.5.tar.gz
+  - ./configure --with-mysql-source=mysql-5.5/
+  - make
+  - sudo make install
+  - sudo cp ./regtest/conf/hs.cnf /etc/mysql/conf.d/hs.cnf
+
+  - cd ./perl-Net-HandlerSocket
+  - perl Makefile.PL
+  - make
+  - sudo make install
+  - sudo service mysql restart
+  - mysql -e "SHOW PROCESSLIST;"
+  - cd ../regtest
+
+script: make

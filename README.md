@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/KonstantinKuklin/HandlerSocket-Plugin-for-MySQL.svg)](https://github.com/KonstantinKuklin/HandlerSocket-Plugin-for-MySQL)
 
 -----------------------------------------------------------------------------
 HandlerSocket plugin for MySQL
