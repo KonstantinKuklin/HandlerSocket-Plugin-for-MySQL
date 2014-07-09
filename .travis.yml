@@ -1,7 +1,25 @@
-language: php
+language: cpp
 
-php:
-  - 5.5
+compiler:
+  - gcc
+
+env:
+  global:
+   # The next declration is the encrypted COVERITY_SCAN_TOKEN, created
+   #   via the "travis encrypt" command using the project repo's public key
+   - secure: "JiOV7rEEUj+AzmkMKX5a1PG6xZQLw17T5FQmb/wTKymSl5Yb2VJk1wqsoJWecRD/RDzFAo5xRS5EN6BxbYwePQZvNhBIXECrTWA5FHmCXkQt8QF+78a0vVyxIICwNhraWRNpvPop72/FSuFaN6NVAK2we/i7rnthCd/KJvOksnc="
+
+addons:
+  coverity_scan:
+    project:
+      name: "KonstantinKuklin/HandlerSocket-Plugin-for-MySQL"
+      description: "Your project description here"
+    notification_email: konstantin.kuklin@gmail.com
+    build_command_prepend:
+      - "./autogen.sh"
+      - "./configure --with-mysql-source=mysql-5.5/"
+    build_command: "make -j4"
+    branch_pattern: coverity_scan
 
 before_script:
   - sudo apt-get update
@@ -22,4 +40,5 @@ before_script:
   - mysql -e "SHOW PROCESSLIST;"
   - cd ../regtest
 
-script: make
+script:
+  - make
