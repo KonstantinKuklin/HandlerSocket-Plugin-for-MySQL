@@ -5,6 +5,7 @@ compiler:
  
 env:
   global:
+   - ci_home=`pwd`
    # The next declration is the encrypted COVERITY_SCAN_TOKEN, created
    #   via the "travis encrypt" command using the project repo's public key
    - secure: "JiOV7rEEUj+AzmkMKX5a1PG6xZQLw17T5FQmb/wTKymSl5Yb2VJk1wqsoJWecRD/RDzFAo5xRS5EN6BxbYwePQZvNhBIXECrTWA5FHmCXkQt8QF+78a0vVyxIICwNhraWRNpvPop72/FSuFaN6NVAK2we/i7rnthCd/KJvOksnc="
@@ -17,7 +18,7 @@ addons:
     notification_email: konstantin.kuklin@gmail.com
     build_command_prepend:
       - "./autogen.sh"
-      - "./configure --with-mysql-source=/home/travis/mysql-5.5/"
+      - "./configure --with-mysql-source=$ci_home/mysql-5.5/"
     build_command: "make -j4"
     branch_pattern: coverity_scan
 
@@ -27,9 +28,11 @@ before_script:
   - sudo apt-get install mysql-server-5.5 mysql-client-5.5 libmysqlclient-dev mysql-source-5.5 libdbd-mysql-perl
   # configure for make
   - ./autogen.sh
-  - cp /usr/src/mysql/mysql-source-5.5.tar.gz .
-  - tar -zxf mysql-source-5.5.tar.gz
-  - ./configure --with-mysql-source=/home/travis/mysql-5.5/
+  - echo $ci_home
+  - cp /usr/src/mysql/mysql-source-5.5.tar.gz $ci_home
+  - pwd
+  - tar -zxf $ci_home/mysql-source-5.5.tar.gz
+  - ./configure --with-mysql-source=$ci_home/mysql-5.5/
   - make
   - sudo make install
   # copy config files for mysql
