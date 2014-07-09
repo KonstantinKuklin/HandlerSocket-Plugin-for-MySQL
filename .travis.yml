@@ -17,7 +17,7 @@ addons:
     notification_email: konstantin.kuklin@gmail.com
     build_command_prepend:
       - "./autogen.sh"
-      - "./configure --with-mysql-source=mysql-5.5/"
+      - "./configure --with-mysql-source=/home/travis/mysql-5.5/"
     build_command: "make -j4"
     branch_pattern: coverity_scan
 
@@ -29,7 +29,7 @@ before_script:
   - ./autogen.sh
   - cp /usr/src/mysql/mysql-source-5.5.tar.gz .
   - tar -zxf mysql-source-5.5.tar.gz
-  - ./configure --with-mysql-source=mysql-5.5/
+  - ./configure --with-mysql-source=/home/travis/mysql-5.5/
   - make
   - sudo make install
   # copy config files for mysql
