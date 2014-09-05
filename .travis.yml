@@ -5,24 +5,29 @@ compiler:
 
 env:
   global:
-   - ci_home=`pwd`
-   # The next declration is the encrypted COVERITY_SCAN_TOKEN, created
-   #   via the "travis encrypt" command using the project repo's public key
-   - secure: "JiOV7rEEUj+AzmkMKX5a1PG6xZQLw17T5FQmb/wTKymSl5Yb2VJk1wqsoJWecRD/RDzFAo5xRS5EN6BxbYwePQZvNhBIXECrTWA5FHmCXkQt8QF+78a0vVyxIICwNhraWRNpvPop72/FSuFaN6NVAK2we/i7rnthCd/KJvOksnc="
+    - ci_home=`pwd`
+    # Variables for Coverity scan
+    - STANDARD_BUILD_COMMAND="make"
+    - COVERITY_SCAN_PROJECT_NAME="KonstantinKuklin%2FHandlerSocket-Plugin-for-MySQL"
+    - COVERITY_SCAN_NOTIFICATION_EMAIL="konstantin.kuklin@gmail.com"
+    # Regular expression selects on which branches to run analysis
+    # Be aware of quotas. Do not run on every branch/commit
+    - COVERITY_SCAN_BRANCH_PATTERN="coverity_scan"
 
-addons:
-  coverity_scan:
-    project:
-      name: "KonstantinKuklin/HandlerSocket-Plugin-for-MySQL"
-      description: "Your project description here"
-    notification_email: konstantin.kuklin@gmail.com
-    build_command_prepend:
-      - "./autogen.sh"
-      - "./configure --with-mysql-source=$ci_home/mysql-5.5/"
-    build_command: "make -j4"
-    branch_pattern: coverity_scan
-    build_script_url: "https://raw.githubusercontent.com/daksheshvyas/MyHelloWorld/master/scan_script.sh"
+    # Optionally execute a command immediately before cov-build, i.e.
+    # pre-configuration required for the COVERITY_SCAN_BUILD_COMMAND
+    - COVERITY_SCAN_BUILD_COMMAND_PREPEND=""
 
+    # Insert the cov-build build commmand here
+    - COVERITY_SCAN_BUILD_COMMAND=$STANDARD_BUILD_COMMAND
+
+    # COVERITY_SCAN_TOKEN via "travis encrypt" using the repo's public key
+    - COVERITY_SCAN_TOKEN: "H67c90X2MdE6OgEVXuhu8A"
+
+    # ---- END Project-specific configuration
+
+    - COVERITY_SCAN_BUILD_URL="https://gist.githubusercontent.com/KonstantinKuklin/63df870cb63519d49bce/raw"
+    - COVERITY_SCAN_BUILD="curl -s $COVERITY_SCAN_BUILD_URL | bash"
 
 before_script:
   # prepare depends
@@ -35,7 +40,9 @@ before_script:
   - pwd
   - tar -zxf $ci_home/mysql-source-5.5.tar.gz
   - ./configure --with-mysql-source=$ci_home/mysql-5.5/
-  - make
+
+script:
+  - eval "$COVERITY_SCAN_BUILD"
   - sudo make install
   # copy config files for mysql
   - sudo cp ./regtest/conf/hs.cnf /etc/mysql/conf.d/hs.cnf
@@ -49,9 +56,5 @@ before_script:
   # debug is mysql get hs
   - mysql -e "SHOW PROCESSLIST;"
   # cd to root HS dir
-  - cd ../
-  # where is coverity send build
-
-script:
-  - cd ./regtest
+  - cd ../regtest
   - make
